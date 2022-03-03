@@ -82,7 +82,25 @@ create view reservations_view as
            p.firstname, p.lastname, r.reservation_id,
            r.no_places, r.status
     from reservation r
-    join
+    join trip t on r.trip_id = t.trip_id
+    join person p on r.person_id = p.person_id
+
+create view trips_view as
+    select t.country, t.trip_date, t.name,
+           t.max_no_places, (t.max_no_places - sum(r.no_places)) as no_available_places
+    from trip t
+    join reservation r on r.reservation_id = t.trip_id
+    group by t.country, t.trip_date, t.name, t.max_no_places
+
+create view available_trips as
+    select t.country, t.trip_date, t.name,
+           t.max_no_places, (t.max_no_places - sum(r.no_places)) as no_available_places
+    from trip t
+    join reservation r on r.reservation_id = t.trip_id
+    group by t.country, t.trip_date, t.name, t.max_no_places
+    having (t.max_no_places - sum(r.no_places)) > 0
+
+-- być może napisanie funckji jest dobrym pomysłem
 
 -- 4.PROCEDURY
 create or replace type reservation_type as OBJECT
@@ -98,3 +116,41 @@ create or replace type reservation_type as OBJECT
 );
 
 create or replace type reservation_type_table is table of reservation_type;
+
+-- funkcja sprawdzająca czy istnieje trip
+create or replace function trip_exist(id in trip.trip_id%type)
+    return boolean
+as
+    exist number;
+begin
+    select count(r.trip_id) into exist from reservation r where r.trip_id = id;
+
+    if exist = 0 then
+        return false;
+    else
+        return true;
+    end if;
+end;
+
+-- main procedure
+create or replace function trip_participants(trip_id int)
+    return reservation_type_table
+as
+    result reservation_type_table;
+begin
+    if not trip_exist(trip_id) then
+        raise_application_error(5001, 'Trip does not exist');
+    end if;
+
+    select reservation_type(t.country, t.trip_date, t.name,
+       p.firstname, p.lastname, r.reservation_id,
+       r.no_places, r.status)
+    bulk collect
+    into result
+    from reservation r
+    join trip t on r.trip_id = t.trip_id
+    join person p on r.person_id = p.person_id
+    where t.trip_id = trip_participants.trip_id;
+
+    return result;
+end;
