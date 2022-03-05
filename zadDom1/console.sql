@@ -218,7 +218,7 @@ begin
     return result;
 end;
 
-create or replace function available_trips_to(country varchar2(50), date_from date, date_to date)
+create or replace function available_trips_to(country varchar2, date_from date, date_to date)
     return available_trip_table
 as
     result available_trip_table;
@@ -231,3 +231,56 @@ begin
 
     return result;
 end;
+
+-- to do:
+-- użyć w widokach funckji available_places
+-- kontrola argumentów w available_trips_to
+
+--5
+
+--5.1
+-- add funckja czy odbyła się
+create or replace procedure add_reservation(trip_id int, person_id int, no_places int)
+as
+begin
+    if available_places(trip_id) < no_places then
+        RAISE_APPLICATION_ERROR(-20000, 'Not enough places');
+    end if;
+    if not trip_exist(trip_id) then
+        RAISE_APPLICATION_ERROR(-20000, 'Trip does not exist');
+    end if;
+    if not person_exist(person_id) then
+        RAISE_APPLICATION_ERROR(-20000, 'Person does not exist');
+    end if;
+
+    insert into reservation(trip_id, person_id, status, no_places)
+        values (trip_id, person_id, 'n', no_places);
+end;
+
+--5.2
+
+create or replace procedure modify_reservation(reservation_id int, status char)
+as
+    declare
+        places int;
+        trip_id int;
+begin
+    select r.no_places, r.trip_id into places, r.trip_id
+    from reservation r
+    where r.reservation_id = modify_reservation.reservation_id;
+
+    if status = 'c' and places > available_places(trip_id) then
+        raise_application_error(-20000, 'Not enough available places');
+    end if;
+    -- spr czy istnije rezerwacja
+    if status <> 'c' and status <> 'n' and status <> 'p' then
+        raise_application_error(-2000, 'Incorrect status');
+    end if;
+
+    update reservation
+        set status = modify_reservation.status
+    where reservation_id = modify_reservation.reservation_id;
+end;
+
+--5.3
+
