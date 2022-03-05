@@ -77,7 +77,7 @@ begin
     end if;
 end;
 
-create or replace function country_exist(country varchar2(50))
+create or replace function country_exist(country varchar2)
     return boolean
 as
     exist number;
@@ -188,10 +188,11 @@ begin
         RAISE_APPLICATION_ERROR(-20000, 'Not enough places');
     elsif not trip_exist(trip_id) then
         RAISE_APPLICATION_ERROR(-20000, 'Trip does not exist');
-    elsif person_exist(person_id) then
+    elsif not person_exist(person_id) then
         RAISE_APPLICATION_ERROR(-20000, 'Person does not exist');
     elsif current_date > trip_start then
-        RAISE_APPLICATION_ERROR(-20000, 'The trip already started');
+--         RAISE_APPLICATION_ERROR(-20000, 'The trip already started');
+        DBMS_OUTPUT.PUT_LINE('Uwaga wycieczka juz sie zaczeła');
     end if;
 
     insert into reservation(trip_id, person_id, status, no_places)
@@ -250,7 +251,7 @@ begin
     from trip t
     where t.trip_id = modify_max_places.trip_id;
 
-    reserved_places = current_max - available_places(trip_id);
+    reserved_places := current_max - available_places(trip_id);
 
     if no_places < reserved_places then
         raise_application_error(-20000,'New max_no_places is lower then ongoing reservations');
