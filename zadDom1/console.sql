@@ -295,4 +295,28 @@ begin
     if no_places < 1 or no_places > available_places(trip_id) then
         raise_application_error(-20000,'Not enough places');
     end if;
+
+    update reservation
+        set no_places = modify_reservation.no_places
+    where reservation_id = modify_reservation.reservation_id;
+end;
+
+create or replace procedure modify_max_places(trip_id int, no_places int)
+as
+    reserved_places int;
+    current_max int;
+begin
+    select max_no_places into current_max
+    from trip t
+    where t.trip_id = modify_max_places.trip_id;
+
+    reserved_places = current_max - available_places(trip_id);
+
+    if no_places < reserved_places then
+        raise_application_error(-20000,'New no_places is lower then ongoing reservations');
+    end if;
+
+    update trip
+        set max_no_places = no_places
+    where trip_id = modify_max_places.trip_id;
 end;
