@@ -256,16 +256,16 @@ begin
     insert into reservation(trip_id, person_id, status, no_places)
         values (trip_id, person_id, 'n', no_places);
 end;
-
 --5.2
+
+-- dodać wszędzie elseif
 
 create or replace procedure modify_reservation(reservation_id int, status char)
 as
-    declare
-        places int;
-        trip_id int;
+    places int;
+    trip_id int;
 begin
-    select r.no_places, r.trip_id into places, r.trip_id
+    select r.no_places, r.trip_id into places, trip_id
     from reservation r
     where r.reservation_id = modify_reservation.reservation_id;
 
@@ -284,3 +284,15 @@ end;
 
 --5.3
 
+create or replace procedure modify_reservation(reservation_id int, no_places int)
+as
+    trip_id int;
+begin
+    select r.trip_id into trip_id
+    from reservation r
+    where r.reservation_id = modify_reservation.reservation_id;
+
+    if no_places < 1 or no_places > available_places(trip_id) then
+        raise_application_error(-20000,'Not enough places');
+    end if;
+end;
