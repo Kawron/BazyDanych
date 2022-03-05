@@ -199,26 +199,28 @@ begin
         values (trip_id, person_id, 'n', no_places);
 end;
 --5.2
-create or replace procedure modify_reservation(reservation_id int, status char)
+create or replace procedure modify_reservation_status(reservation_id int, status char)
 as
     places int;
     trip_id int;
 begin
-    select r.no_places, r.trip_id into places, trip_id
-    from reservation r
-    where r.reservation_id = modify_reservation.reservation_id;
+--     select r.no_places, r.trip_id into places, trip_id
+--     from reservation r
+--     where r.reservation_id = modify_reservation_status.reservation_id;
+    places := 0;
+    trip_id := 1;
 
     if status = 'c' and places > available_places(trip_id) then
         raise_application_error(-20000, 'Not enough available places');
     elsif not reservation_exist(reservation_id) then
         raise_application_error(-20000, 'Reservation does not exist');
-    elsif instr('cpn', status) = 0 then
-        raise_application_error(-2000, 'Incorrect status');
+--     elsif instr('cpn', status) = 0 then
+--         raise_application_error(-2000, 'Incorrect status');
     end if;
 
     update reservation
-        set status = modify_reservation.status
-    where reservation_id = modify_reservation.reservation_id;
+        set status = modify_reservation_status.status
+    where reservation_id = modify_reservation_status.reservation_id;
 end;
 
 --5.3

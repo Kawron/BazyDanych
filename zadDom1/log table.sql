@@ -5,6 +5,7 @@ create table log
 , log_date date
 , status char
 , no_places int
+, info varchar2(50)
 , constraint log_pk primary key
  (
  log_id
