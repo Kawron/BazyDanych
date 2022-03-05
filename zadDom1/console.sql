@@ -83,14 +83,14 @@ create view reservations_view as
            r.no_places, r.status
     from reservation r
     join trip t on r.trip_id = t.trip_id
-    join person p on r.person_id = p.person_id
+    join person p on r.person_id = p.person_id;
 
 create view trips_view as
     select t.country, t.trip_date, t.name,
            t.max_no_places, (t.max_no_places - sum(r.no_places)) as no_available_places
     from trip t
     join reservation r on r.reservation_id = t.trip_id
-    group by t.country, t.trip_date, t.name, t.max_no_places
+    group by t.country, t.trip_date, t.name, t.max_no_places;
 
 create view available_trips as
     select t.country, t.trip_date, t.name,
@@ -98,7 +98,7 @@ create view available_trips as
     from trip t
     join reservation r on r.reservation_id = t.trip_id
     group by t.country, t.trip_date, t.name, t.max_no_places
-    having (t.max_no_places - sum(r.no_places)) > 0
+    having (t.max_no_places - sum(r.no_places)) > 0;
 
 -- być może napisanie funckji jest dobrym pomysłem
 
@@ -110,20 +110,20 @@ create or replace type reservation_type as OBJECT
   trip_name varchar2(50),
   firstname varchar2(50),
   lastname varchar2(50),
-  reservation_id varchar2(50),
-  no_places integer,
+  reservation_id int,
+  no_places int,
   status char(1)
 );
 
 create or replace type reservation_type_table is table of reservation_type;
 
 -- funkcja sprawdzająca czy istnieje trip
-create or replace function trip_exist(id in trip.trip_id%type)
+create or replace function trip_exist(trip_id in trip.trip_id%type)
     return boolean
 as
     exist number;
 begin
-    select count(r.trip_id) into exist from reservation r where r.trip_id = id;
+    select count(r.trip_id) into exist from reservation r where r.trip_id = trip_exist.trip_id;
 
     if exist = 0 then
         return false;
@@ -132,14 +132,29 @@ begin
     end if;
 end;
 
--- main procedure
+-- funckja sprawdzająca czy istnieje osoba
+create or replace function person_exist(person_id in person.person_id%type)
+    return boolean
+as
+    exist number;
+begin
+    select count(p.person_id) into exist from person p where p.person_id = person_exist.person_id;
+
+    if exist = 0 then
+        return false;
+    else
+        return true;
+    end if;
+end;
+
+-- 1
 create or replace function trip_participants(trip_id int)
     return reservation_type_table
 as
     result reservation_type_table;
 begin
     if not trip_exist(trip_id) then
-        raise_application_error(5001, 'Trip does not exist');
+        raise_application_error(-20000, 'Trip does not exist');
     end if;
 
     select reservation_type(t.country, t.trip_date, t.name,
@@ -151,6 +166,68 @@ begin
     join trip t on r.trip_id = t.trip_id
     join person p on r.person_id = p.person_id
     where t.trip_id = trip_participants.trip_id;
+
+    return result;
+end;
+--2
+create or replace function person_reservations(person_id int)
+    return reservation_type_table
+as
+    result reservation_type_table;
+begin
+    if not person_exist(person_id) then
+        raise_application_error(-20000, 'Person does not exist');
+    end if;
+
+    select reservation_type(t.country, t.trip_date, t.name,
+       p.firstname, p.lastname, r.reservation_id,
+       r.no_places, r.status)
+    bulk collect
+    into result
+    from person p
+    join reservation r on p.person_id = r.person_id
+    join trip t on t.trip_id = r.trip_id
+    where p.person_id = person_reservations.person_id;
+
+    return result;
+end;
+
+--3
+create or replace type available_trip as OBJECT
+(
+    trip_id int,
+    trip_name varchar2(50),
+    country varchar2(50),
+    trip_date date,
+    available_places int
+);
+
+create or replace type available_trip_table is table of available_trip;
+
+create or replace function available_places(trip_id int)
+    return int
+as
+    result int;
+begin
+    select (t.max_no_places - sum(r.no_places)) as amount into result
+    from trip t
+    join reservation r on t.TRIP_ID = r.TRIP_ID
+    where t.trip_id = available_places.trip_id and r.STATUS <> 'C'
+    group by t.MAX_NO_PLACES;
+
+    return result;
+end;
+
+create or replace function available_trips_to(country varchar2(50), date_from date, date_to date)
+    return available_trip_table
+as
+    result available_trip_table;
+begin
+    select available_trip(t.trip_id, t.name, t.country, t.trip_date, available_places(t.trip_id))
+    bulk collect into result
+    from trip t
+    where t.country = available_trips_to.COUNTRY and
+          t.trip_date between date_from and date_to;
 
     return result;
 end;
