@@ -1,4 +1,7 @@
--- 4.PROCEDURY
+-- Procedury i funkcje
+
+-- typy
+
 create or replace type reservation_type as OBJECT
 (
   country varchar2(50),
@@ -13,13 +16,27 @@ create or replace type reservation_type as OBJECT
 
 create or replace type reservation_type_table is table of reservation_type;
 
--- funkcja sprawdzająca czy istnieje trip
-create or replace function trip_exist(trip_id in trip.trip_id%type)
+create or replace type available_trip as OBJECT
+(
+    trip_id int,
+    trip_name varchar2(50),
+    country varchar2(50),
+    trip_date date,
+    available_places int
+);
+
+create or replace type available_trip_table is table of available_trip;
+
+-- pomocnicze
+
+create or replace function trip_exist(trip_id int)
     return boolean
 as
     exist number;
 begin
-    select count(r.trip_id) into exist from reservation r where r.trip_id = trip_exist.trip_id;
+    select count(r.trip_id) into exist
+    from reservation r
+    where r.trip_id = trip_exist.trip_id;
 
     if exist = 0 then
         return false;
@@ -28,13 +45,14 @@ begin
     end if;
 end;
 
--- funckja sprawdzająca czy istnieje osoba
-create or replace function person_exist(person_id in person.person_id%type)
+create or replace function person_exist(person_id int)
     return boolean
 as
     exist number;
 begin
-    select count(p.person_id) into exist from person p where p.person_id = person_exist.person_id;
+    select count(p.person_id) into exist
+    from person p
+    where p.person_id = person_exist.person_id;
 
     if exist = 0 then
         return false;
@@ -43,7 +61,55 @@ begin
     end if;
 end;
 
--- 1
+create or replace function reservation_exist(reservation_id int)
+    return boolean
+as
+    exist number;
+begin
+    select count(r.reservation_id) into exist
+    from reservation r
+    where r.reservation_id = reservation_exist.reservation_id;
+
+    if exist = 0 then
+        return false;
+    else
+        return true;
+    end if;
+end;
+
+create or replace function country_exist(country varchar2(50))
+    return boolean
+as
+    exist number;
+begin
+    select count(t.country) into exist
+    from trip t
+    where t.country = country_exist.country;
+
+    if exist = 0 then
+        return false;
+    else
+        return true;
+    end if;
+end;
+
+create or replace function available_places(trip_id int)
+    return int
+as
+    result int;
+begin
+    select (t.max_no_places - sum(r.no_places)) as amount into result
+    from trip t
+    join reservation r on t.TRIP_ID = r.TRIP_ID
+    where t.trip_id = available_places.trip_id and r.STATUS <> 'C'
+    group by t.MAX_NO_PLACES;
+
+    return result;
+end;
+
+-- Wlasciwe funckje i procedury
+
+--4.a
 create or replace function trip_participants(trip_id int)
     return reservation_type_table
 as
@@ -65,7 +131,7 @@ begin
 
     return result;
 end;
---2
+--4.b
 create or replace function person_reservations(person_id int)
     return reservation_type_table
 as
@@ -88,37 +154,19 @@ begin
     return result;
 end;
 
---3
-create or replace type available_trip as OBJECT
-(
-    trip_id int,
-    trip_name varchar2(50),
-    country varchar2(50),
-    trip_date date,
-    available_places int
-);
-
-create or replace type available_trip_table is table of available_trip;
-
-create or replace function available_places(trip_id int)
-    return int
-as
-    result int;
-begin
-    select (t.max_no_places - sum(r.no_places)) as amount into result
-    from trip t
-    join reservation r on t.TRIP_ID = r.TRIP_ID
-    where t.trip_id = available_places.trip_id and r.STATUS <> 'C'
-    group by t.MAX_NO_PLACES;
-
-    return result;
-end;
+--4.c
 
 create or replace function available_trips_to(country varchar2, date_from date, date_to date)
     return available_trip_table
 as
     result available_trip_table;
 begin
+    if not country_exist(country) then
+        raise_application_error(-20000, 'There is no trip to this destination');
+    ElSIF date_from > date_to then
+        raise_application_error(-20000, 'Incorrect date');
+    end if;
+
     select available_trip(t.trip_id, t.name, t.country, t.trip_date, available_places(t.trip_id))
     bulk collect into result
     from trip t
@@ -128,34 +176,28 @@ begin
     return result;
 end;
 
--- to do:
--- użyć w widokach funckji available_places
--- kontrola argumentów w available_trips_to
-
---5
-
 --5.1
--- add funckja czy odbyła się
 create or replace procedure add_reservation(trip_id int, person_id int, no_places int)
 as
+    trip_start date;
 begin
+    select t.trip_date into trip_start
+    from TRIP t where t.TRIP_ID = add_reservation.trip_id;
+
     if available_places(trip_id) < no_places then
         RAISE_APPLICATION_ERROR(-20000, 'Not enough places');
-    end if;
-    if not trip_exist(trip_id) then
+    elsif not trip_exist(trip_id) then
         RAISE_APPLICATION_ERROR(-20000, 'Trip does not exist');
-    end if;
-    if not person_exist(person_id) then
+    elsif person_exist(person_id) then
         RAISE_APPLICATION_ERROR(-20000, 'Person does not exist');
+    elsif current_date > trip_start then
+        RAISE_APPLICATION_ERROR(-20000, 'The trip already started');
     end if;
 
     insert into reservation(trip_id, person_id, status, no_places)
         values (trip_id, person_id, 'n', no_places);
 end;
 --5.2
-
--- dodać wszędzie elseif
-
 create or replace procedure modify_reservation(reservation_id int, status char)
 as
     places int;
@@ -167,9 +209,9 @@ begin
 
     if status = 'c' and places > available_places(trip_id) then
         raise_application_error(-20000, 'Not enough available places');
-    end if;
-    -- spr czy istnije rezerwacja
-    if status <> 'c' and status <> 'n' and status <> 'p' then
+    elsif not reservation_exist(reservation_id) then
+        raise_application_error(-20000, 'Reservation does not exist');
+    elsif instr('cpn', status) = 0 then
         raise_application_error(-2000, 'Incorrect status');
     end if;
 
@@ -179,7 +221,6 @@ begin
 end;
 
 --5.3
-
 create or replace procedure modify_reservation(reservation_id int, no_places int)
 as
     trip_id int;
@@ -188,8 +229,10 @@ begin
     from reservation r
     where r.reservation_id = modify_reservation.reservation_id;
 
-    if no_places < 1 or no_places > available_places(trip_id) then
+    if no_places > available_places(trip_id) then
         raise_application_error(-20000,'Not enough places');
+    elsif not reservation_exist(trip_id) then
+        raise_application_error(-20000, 'Reservation does not exist');
     end if;
 
     update reservation
@@ -197,6 +240,7 @@ begin
     where reservation_id = modify_reservation.reservation_id;
 end;
 
+--5.4
 create or replace procedure modify_max_places(trip_id int, no_places int)
 as
     reserved_places int;
@@ -209,7 +253,9 @@ begin
     reserved_places = current_max - available_places(trip_id);
 
     if no_places < reserved_places then
-        raise_application_error(-20000,'New no_places is lower then ongoing reservations');
+        raise_application_error(-20000,'New max_no_places is lower then ongoing reservations');
+    elsif not trip_exist(trip_id) then
+        raise_application_error(-20000, 'Trip does not exist');
     end if;
 
     update trip
