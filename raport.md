@@ -1,3 +1,5 @@
+<font size = 4>
+
 # Laboratorium 1 - Karol Wrona
 
 ## 1. Tabele
@@ -70,6 +72,7 @@ add constraint reservation_chk1 check
 enable;
 ```
 Tabela log
+
 ``` sql
 create table log
 (
