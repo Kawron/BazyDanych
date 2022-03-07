@@ -184,15 +184,10 @@ begin
     select t.trip_date into trip_start
     from TRIP t where t.TRIP_ID = add_reservation.trip_id;
 
-    if available_places(trip_id) < no_places then
-        RAISE_APPLICATION_ERROR(-20000, 'Not enough places');
-    elsif not trip_exist(trip_id) then
+    if not trip_exist(trip_id) then
         RAISE_APPLICATION_ERROR(-20000, 'Trip does not exist');
     elsif not person_exist(person_id) then
         RAISE_APPLICATION_ERROR(-20000, 'Person does not exist');
-    elsif current_date > trip_start then
---         RAISE_APPLICATION_ERROR(-20000, 'The trip already started');
-        DBMS_OUTPUT.PUT_LINE('Uwaga wycieczka juz sie zaczeła');
     end if;
 
     insert into reservation(trip_id, person_id, status, no_places)
@@ -204,18 +199,12 @@ as
     places int;
     trip_id int;
 begin
---     select r.no_places, r.trip_id into places, trip_id
---     from reservation r
---     where r.reservation_id = modify_reservation_status.reservation_id;
-    places := 0;
-    trip_id := 1;
+    select r.no_places, r.trip_id into places, trip_id
+    from reservation r
+    where r.reservation_id = modify_reservation_status.reservation_id;
 
-    if status = 'c' and places > available_places(trip_id) then
-        raise_application_error(-20000, 'Not enough available places');
-    elsif not reservation_exist(reservation_id) then
+    if not reservation_exist(reservation_id) then
         raise_application_error(-20000, 'Reservation does not exist');
---     elsif instr('cpn', status) = 0 then
---         raise_application_error(-2000, 'Incorrect status');
     end if;
 
     update reservation
@@ -232,9 +221,7 @@ begin
     from reservation r
     where r.reservation_id = modify_reservation.reservation_id;
 
-    if no_places > available_places(trip_id) then
-        raise_application_error(-20000,'Not enough places');
-    elsif not reservation_exist(trip_id) then
+    if not reservation_exist(trip_id) then
         raise_application_error(-20000, 'Reservation does not exist');
     end if;
 
@@ -255,9 +242,7 @@ begin
 
     reserved_places := current_max - available_places(trip_id);
 
-    if no_places < reserved_places then
-        raise_application_error(-20000,'New max_no_places is lower then ongoing reservations');
-    elsif not trip_exist(trip_id) then
+    if not trip_exist(trip_id) then
         raise_application_error(-20000, 'Trip does not exist');
     end if;
 
