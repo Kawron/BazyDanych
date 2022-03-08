@@ -51,10 +51,8 @@ begin
     from reservation r
     where r.reservation_id = :new.reservation_id;
 
-    if :new.status = 'c' and places > available_places(:new.trip_id) then
+    if :new.status <> 'c' and places > available_places(:new.trip_id) then
         raise_application_error(-20000, 'Not enough available places');
-    elsif instr('cpn', :new.status) = 0 then
-        raise_application_error(-2000, 'Incorrect status');
     end if;
 
 end;

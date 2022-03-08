@@ -1,9 +1,21 @@
-<font size = 5>
+<font size = 4>
 
 # Laboratorium 1 - Karol Wrona
 
+## Spis Treści
+1. [Tabele](#1-tabele)
+2. [Przykładowe dane](#2-przykładowe-dane)
+3. [Widoki](#3-widoki)
+4. [Procedury pobierające dane](#4-procedury-pobierające-dane)
+5. [Procedury modyfikujące dane](#5-proceudry-modyfikujące-dane)
+6. [Triggery dla tabeli log](#6-triggery-dla-tabeli-log)
+7. [Kontrola dostępności miejsc](#7-kontrola-dostępności-miejsc)
+
+<div style="page-break-after: always;"></div>
+
 ## 1. Tabele
 
+Tabela person
 ``` sql
 create table person
 (
@@ -18,6 +30,7 @@ create table person
 );
 ```
 ``` sql
+Tabela Trip
 create table trip
 (
  trip_id int generated always as identity not null
@@ -32,6 +45,10 @@ create table trip
  enable
 );
 ```
+
+<div style="page-break-after: always;"></div>
+
+Tabela Reservation
 ``` sql
 create table reservation
 (
@@ -71,7 +88,11 @@ add constraint reservation_chk1 check
 (status in ('n','p','c'))
 enable;
 ```
-Tabela log
+
+<div style="page-break-after: always;"></div>
+
+### Tabela log
+Tabela dziennikująca zmiany w bazie danych. Dodano kolumne info, która opisuje jaka operacja została wykonana. Triggery znajdują się w [punkcie 6.](#6-triggery-dla-tabeli-log)
 
 ``` sql
 create table log
@@ -99,28 +120,76 @@ references RESERVATION
 )
 enable;
 ```
+
+<div style="page-break-after: always;"></div>
+
 ## 2. Przykładowe dane
 
+Przykładowe osoby
 ```sql
 insert into person (firstname, lastname)
 values('adam', 'kowalski');
 insert into person (firstname, lastname)
 values('jan', 'nowak');
-select * from person;
+insert into person (firstname, lastname)
+values('maciek', 'pomidor');
+insert into person (firstname, lastname)
+values('adam', 'cebula');
+insert into person (firstname, lastname)
+values('zbigniew', 'rzodkiewka');
+insert into person (firstname, lastname)
+values('maria', 'cukinia');
+insert into person (firstname, lastname)
+values('ewa', 'truskawka');
+insert into person (firstname, lastname)
+values('jozef', 'gruszka');
+insert into person (firstname, lastname)
+values('helena', 'ogorek');
+insert into person (firstname, lastname)
+values('jan', 'malina');
+```
+
+Przykładowe wycieczki
+```sql
 insert into trip (name, country, trip_date, max_no_places)
 values ('wycieczka do paryza','francja',to_date('2021-09-03','yyyy-mm-dd'),3);
 insert into trip (name, country, trip_date, max_no_places)
-values ('wycieczka do krakowa','polska',to_date('2022-12-05','yyyy-mm-dd'),2);
-select * from trip;
+values ('wycieczka do krakowa','polska',to_date('2022-12-05','yyyy-mm-dd'),5);
+insert into trip (name, country, trip_date, max_no_places)
+values ('wycieczka do berlina','niemcy',to_date('2022-10-09','yyyy-mm-dd'),3);
+insert into trip (name, country, trip_date, max_no_places)
+values ('wycieczka do rzymu','wlochy',to_date('2022-06-01','yyyy-mm-dd'),2);
+```
+
+<div style="page-break-after: always;"></div>
+
+Przykładowe rezerwacje
+```sql
 insert into reservation(trip_id, person_id, no_places, status)
-values (1,1,1,'n');
+values (1,1,2,'n');
 insert into reservation(trip_id, person_id, no_places, status)
-values (2,1,1,'p');
+values (1,2,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (1,3,3,'c');
+insert into reservation(trip_id, person_id, no_places, status)
+values (1,4,1,'c');
+insert into reservation(trip_id, person_id, no_places, status)
+values (2,5,1,'n');
+insert into reservation(trip_id, person_id, no_places, status)
+values (2,6,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (4,7,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (4,8,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (4,9,1,'c');
+insert into reservation(trip_id, person_id, no_places, status)
+values (3,10,1,'p');
 ```
 
 ## 3. Widoki
 
-a)
+a) Widok Rezerwacji
 ```sql
 create view reservations_view as
     select t.country, t.trip_date, t.name,
@@ -131,7 +200,7 @@ create view reservations_view as
     join person p on r.person_id = p.person_id;
 ```
 
-b) Korzystam z pomocniczej funkcji *available_places*
+b) Widok wycieczek. Korzystam z pomocniczej funkcji [*available_places*](#available)
 ```sql
 create view trips_view as
     select t.country, t.trip_date, t.name,
@@ -139,7 +208,10 @@ create view trips_view as
     from trip t
     join reservation r on r.reservation_id = t.trip_id;
 ```
-c) 
+
+<div style="page-break-after: always;"></div>
+
+c) Widok dostępnych wycieczek
 ```sql
 create view available_trips as
     select t.country, t.trip_date, t.name,
@@ -149,8 +221,12 @@ create view available_trips as
     where available_places(t.trip_id) > 0;
 ```
 
+## 4. Procedury pobierające dane
+
+
 ## Typy Danych
 
+Typ reprezentujący rezerwacje
 ```sql
 create or replace type reservation_type as OBJECT
 (
@@ -167,6 +243,7 @@ create or replace type reservation_type as OBJECT
 create or replace type reservation_type_table is table of reservation_type;
 ```
 
+Tryp reprezentujący wycieczkę
 ```sql
 create or replace type available_trip as OBJECT
 (
@@ -180,8 +257,11 @@ create or replace type available_trip as OBJECT
 create or replace type available_trip_table is table of available_trip;
 ```
 
+<div style="page-break-after: always;"></div>
+
 ## Funkcje Pomocnicze
 
+Czy wycieczka istnieje
 ```sql
 create or replace function trip_exist(trip_id int)
     return boolean
@@ -199,7 +279,7 @@ begin
     end if;
 end;
 ```
-
+Czy osoba istnieje
 ```sql
 create or replace function person_exist(person_id int)
     return boolean
@@ -217,6 +297,9 @@ begin
     end if;
 end;
 ```
+
+<div style="page-break-after: always;"></div>
+Czy rezerwacja istnieje
 
 ```sql
 create or replace function reservation_exist(reservation_id int)
@@ -236,6 +319,8 @@ begin
 end;
 ```
 
+Czy kraj istnieje
+
 ```sql
 create or replace function country_exist(country varchar2)
     return boolean
@@ -253,6 +338,10 @@ begin
     end if;
 end;
 ```
+<div style="page-break-after: always;"></div>
+
+<a name="available"></a>
+Funkcja obliczająca ile jest wolnych miejsc na danej wycieczce.
 
 ```sql
 create or replace function available_places(trip_id int)
@@ -270,10 +359,9 @@ begin
 end;
 ```
 
+## Właściwe Procedury
 
-## 4. Procedury pobierające dane
-
-a)
+a) Zwraca uczestników wycieczek
 ```sql
 create or replace function trip_participants(trip_id int)
     return reservation_type_table
@@ -298,7 +386,9 @@ begin
 end;
 ```
 
-b)
+<div style="page-break-after: always;"></div>
+
+b) Zwraca rezerwacje osoby
 ```sql
 create or replace function person_reservations(person_id int)
     return reservation_type_table
@@ -324,7 +414,7 @@ end;
 ```
 
 
-c)
+c) Zwraca dostępne wycieczki do danego kraju
 ```sql
 create or replace function available_trips_to(country varchar2, date_from date, date_to date)
     return available_trip_table
@@ -349,7 +439,9 @@ end;
 
 ## 5. Proceudry modyfikujące dane
 
-a)
+### Część kontroli danych (np. czy jest wystarczająco dużo wolnych miejsc) została przeniesiona do [triggerów](#7-kontrola-dostępności-miejsc). W procedurach sprawdzamy tylko czy dane do których się odwołujemy istnieją.
+
+a) Procedura dodająca rezerwacje
 ```sql
 create or replace procedure add_reservation(trip_id int, person_id int, no_places int)
 as
@@ -369,7 +461,7 @@ begin
 end;
 ```
 
-b)
+b) Procedura modyfikująca status rezerwacji
 ```sql
 create or replace procedure modify_reservation_status(reservation_id int, status char)
 as
@@ -390,7 +482,9 @@ begin
 end;
 ```
 
-c)
+<div style="page-break-after: always;"></div>
+
+c) Procedura modyfikująca ilość zajętych miejsc przez rezerwacje
 ```sql
 create or replace procedure modify_reservation(reservation_id int, no_places int)
 as
@@ -410,7 +504,7 @@ begin
 end;
 ```
 
-d)
+d) Procedura modyfikująca maksymalną ilość miejsc na wycieczce
 ```sql
 create or replace procedure modify_max_places(trip_id int, no_places int)
 as
@@ -433,9 +527,13 @@ begin
 end;
 ```
 
+<div style="page-break-after: always;"></div>
+
 ## 6. Triggery dla tabeli log
 
-a)
+Tabela log jest opisana w [punkcie 1.](#tabela-log)
+
+a) Trigger dodający wpis do loga po dodaniu rezerwacji
 ```sql
 create or replace trigger log_add_reservation
     after insert
@@ -446,7 +544,9 @@ begin
     values (:new.reservation_id, current_date, :new.status, :new.no_places, 'add reservation');
 end;
 ```
-b) c)
+b) c) Triggery dodające wpis do loga po zmodyfikowaniu rezerwacji
+
+Triggery opisane w treści zadania w podpunkcie b) i c) są zrealizowane jako jeden trigger gdyż oba wykonują update na tabeli reservation. W przypadku gdy wywołamy procedurę modify_reservation w taki sposób, że nie zmieni ona żadnych danych w tabeli, to taka operacja nie zostanie zapisana w dzienniku.
 ```sql
 create or replace trigger log_modify_reservation
     after update
@@ -463,9 +563,13 @@ begin
 end;
 ```
 
+<div style="page-break-after: always;"></div>
+
 ## 7. Kontrola dostępności miejsc
 
-a)
+a) Trigger sprawdzający czy można dodać nową rezerwacje. Sprawdza czy jest wystarczająco dużo miejsc
+
+Rozsądnie byłoby zablokować możliwość zapisania się na wycieczkę, która już się odbyła. Jednak aby uniknąć problemów z sprawdzaniem poprawności innych procedur, opcja ta została zakomentowana (Być może Pan Dr. ma swój zestaw danych do przetestowania).
 ```sql
 create or replace trigger reservation_add_trigger
     before insert
@@ -486,7 +590,9 @@ begin
 end;
 ```
 
-b)
+b) Trigger sprawdza czy można zmienić status rezerwacji. Ponieważ rezerwacje z statusem 'c' nie wliczają się do
+limitu miejsc, trzeba sprawdzić czy po zmianie statusu ilość nie zostanie przekroczona.
+
 ```sql
 create or replace trigger change_status_trigger
     before insert
@@ -500,16 +606,16 @@ begin
     from reservation r
     where r.reservation_id = :new.reservation_id;
 
-    if :new.status = 'c' and places > available_places(:new.trip_id) then
+    if :new.status <> 'c' and places > available_places(:new.trip_id) then
         raise_application_error(-20000, 'Not enough available places');
-    elsif instr('cpn', :new.status) = 0 then
-        raise_application_error(-2000, 'Incorrect status');
     end if;
 
 end;
 ```
 
-c)
+<div style="page-break-after: always;"></div>
+
+c) Trigger sprawdzający czy możemy zmodyfikować ilość miejsc zajętych przez rezerwacje
 ```sql
 create or replace trigger modify_reservation_trigger
     before insert
@@ -528,7 +634,8 @@ begin
 end;
 ```
 
-d)
+d) Trigger sprawdzający czy można zmodyfikować maksymalną ilość miejsc dla wycieczki. Oczywiście
+nie można pozwolić by maksymalna ilość wolnych miejsc była mniejsza od liczby aktualnie zajętych miejsc
 ```sql
 create or replace trigger modify_max_places
     before insert
@@ -549,5 +656,4 @@ begin
     end if;
 end;
 ```
-
 </font>

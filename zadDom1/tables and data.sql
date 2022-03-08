@@ -65,13 +65,51 @@ insert into person (firstname, lastname)
 values('adam', 'kowalski');
 insert into person (firstname, lastname)
 values('jan', 'nowak');
+insert into person (firstname, lastname)
+values('maciek', 'pomidor');
+insert into person (firstname, lastname)
+values('adam', 'cebula');
+insert into person (firstname, lastname)
+values('zbigniew', 'rzodkiewka');
+insert into person (firstname, lastname)
+values('maria', 'cukinia');
+insert into person (firstname, lastname)
+values('ewa', 'truskawka');
+insert into person (firstname, lastname)
+values('jozef', 'gruszka');
+insert into person (firstname, lastname)
+values('helena', 'ogorek');
+insert into person (firstname, lastname)
+values('jan', 'malina');
 select * from person;
+
 insert into trip (name, country, trip_date, max_no_places)
 values ('wycieczka do paryza','francja',to_date('2021-09-03','yyyy-mm-dd'),3);
 insert into trip (name, country, trip_date, max_no_places)
-values ('wycieczka do krakowa','polska',to_date('2022-12-05','yyyy-mm-dd'),2);
+values ('wycieczka do krakowa','polska',to_date('2022-12-05','yyyy-mm-dd'),5);
+insert into trip (name, country, trip_date, max_no_places)
+values ('wycieczka do berlina','niemcy',to_date('2022-10-09','yyyy-mm-dd'),3);
+insert into trip (name, country, trip_date, max_no_places)
+values ('wycieczka do rzymu','wlochy',to_date('2022-06-01','yyyy-mm-dd'),2);
 select * from trip;
+
 insert into reservation(trip_id, person_id, no_places, status)
-values (1,1,1,'n');
+values (1,1,2,'n');
 insert into reservation(trip_id, person_id, no_places, status)
-values (2,1,1,'p');
+values (1,2,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (1,3,3,'c');
+insert into reservation(trip_id, person_id, no_places, status)
+values (1,4,1,'c');
+insert into reservation(trip_id, person_id, no_places, status)
+values (2,5,1,'n');
+insert into reservation(trip_id, person_id, no_places, status)
+values (2,6,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (4,7,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (4,8,1,'p');
+insert into reservation(trip_id, person_id, no_places, status)
+values (4,9,1,'c');
+insert into reservation(trip_id, person_id, no_places, status)
+values (3,10,1,'p');
