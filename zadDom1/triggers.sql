@@ -40,10 +40,11 @@ begin
 end;
 
 create or replace trigger change_status_trigger
-    before insert
+    before update
     on RESERVATION
     for each row
 declare
+    pragma autonomous_transaction;
     places int;
     trip_id int;
 begin
@@ -54,40 +55,33 @@ begin
     if :new.status <> 'c' and places > available_places(:new.trip_id) then
         raise_application_error(-20000, 'Not enough available places');
     end if;
-
 end;
 
+
 create or replace trigger modify_reservation_trigger
-    before insert
+    before update
     on RESERVATION
     for each row
 declare
-    trip_id int;
+    pragma autonomous_transaction;
 begin
-    select r.trip_id into trip_id
-    from reservation r
-    where r.reservation_id = :new.reservation_id;
-
-    if :new.no_places > available_places(trip_id) then
+    if :new.no_places - :old.no_places > available_places(:old.trip_id) then
         raise_application_error(-20000,'Not enough places');
     end if;
 end;
 
 create or replace trigger modify_max_places
-    before insert
-    on RESERVATION
+    before update
+    on TRIP
     for each row
 declare
     reserved_places int;
-    current_max int;
+    pragma autonomous_transaction;
 begin
-    select max_no_places into current_max
-    from trip t
-    where t.trip_id = :new.trip_id;
 
-    reserved_places := current_max - available_places(:new.trip_id);
+    reserved_places := :old.max_no_places - available_places(:new.trip_id);
 
-    if :new.no_places < reserved_places then
+    if :new.max_no_places < reserved_places then
         raise_application_error(-20000,'New max_no_places is lower then ongoing reservations');
     end if;
 end;

@@ -101,7 +101,7 @@ begin
     select (t.max_no_places - sum(r.no_places)) as amount into result
     from trip t
     join reservation r on t.TRIP_ID = r.TRIP_ID
-    where t.trip_id = available_places.trip_id and r.STATUS <> 'C'
+    where t.trip_id = available_places.trip_id and r.STATUS <> 'c'
     group by t.MAX_NO_PLACES;
 
     return result;
