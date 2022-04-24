@@ -1,0 +1,66 @@
+{
+    "trip_id":0,
+    "name":"Kajaki w Gorach",
+    "organised-by": 0,
+    "start-date": "12.06.2022",
+    "end-date": "14.06.2022",
+    "destination": {
+        "country": "Poland",
+        "city": "Zywiec"
+    },
+    "opinions": [
+        {"user_id":0, "stars":5,"comment":"Super!!"},
+        {"user_id":1, "stars":4,"comment":""},
+        {"user_id":2, "stars":1,"comment":"Do kitu"}
+    ],
+    "max-no-of-places":10
+}
+{
+    "trip_id":1,
+    "name":"Zwiedzanie Krakowa",
+    "organised-by": 0,
+    "start-date": "12.06.2022",
+    "end-date": "14.06.2022",
+    "destination": {
+        "country": "Poland",
+        "city": "Cracow"
+    },
+    "opinions": [
+        {"user_id":0, "stars":5,"comment":"Super!!"},
+        {"user_id":1, "stars":4,"comment":"Moze byc"},
+        {"user_id":3, "stars":1,"comment":""},
+        {"user_id":2, "stars":2,"comment":"slabo"}
+    ],
+    "max-no-of-places":2
+}
+{
+    "trip_id":2,
+    "name":"Berlin",
+    "organised-by": 1,
+    "start-date": "18.06.2022",
+    "end-date": "28.06.2022",
+    "destination": {
+        "country": "Germany",
+        "city": "Berlin"
+    },
+    "opinions": [
+        {"user_id":0, "stars":5,"comment":"Wundebar"},
+        {"user_id":1, "stars":4,"comment":""}
+    ],
+    "max-no-of-places":12
+}
+{
+    "trip_id":3,
+    "name":"Polskie Morze",
+    "organised-by": 2,
+    "start-date": "12.07.2022",
+    "end-date": "20.07.2022",
+    "destination": {
+        "country": "Poland",
+        "city": "Leba"
+    },
+    "opinions": [
+        {"user_id":0, "stars":2,"comment":"Moze byc"}
+    ],
+    "max-no-of-places":12
+}
