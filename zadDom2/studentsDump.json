@@ -1,0 +1,10 @@
+{"_id":{"$oid":"625c92a2dc7746359a700546"},"albumIndex":3,"name":"Jan","surname":"Kolodziej","age":26,"faculty":"WIET","year":3,"grades":[{"subject":"math","grade":5},{"subject":"database","grade":5},{"subject":"ASD","grade":5}]}
+{"_id":{"$oid":"625c92a2dc7746359a700547"},"albumIndex":4,"name":"Zbigniew","surname":"Wodecki","age":60,"faculty":"WIET","profesor":true}
+{"_id":{"$oid":"625c92a2dc7746359a700548"},"albumIndex":9,"name":"Zbigniew","surname":"Raubo","age":57,"faculty":"WIET","profesor":true}
+{"_id":{"$oid":"625c92a2dc7746359a700549"},"albumIndex":10,"name":"Andrzej","surname":"Jankowski","age":34,"faculty":"WIMP","year":2,"grades":[{"subject":"math","grade":5},{"subject":"WDAI","grade":5},{"subject":"WDI","grade":5}]}
+{"_id":{"$oid":"625c92a2dc7746359a70054a"},"albumIndex":8,"name":"Zbigniew","surname":"Lapinski","age":60,"faculty":"AIR","profesor":true}
+{"_id":{"$oid":"625c92a2dc7746359a70054b"},"albumIndex":2,"name":"Mariusz","surname":"Pudzianowski","age":40,"faculty":"WIET","year":2,"grades":[{"subject":"PE","grade":5},{"subject":"ASD","grade":3},{"subject":"WDAI","grade":5}]}
+{"_id":{"$oid":"625c92a2dc7746359a70054c"},"albumIndex":7,"name":"Zbigniew","surname":"Gintrowski","age":60,"faculty":"AIR","profesor":true}
+{"_id":{"$oid":"625c92a2dc7746359a70054d"},"albumIndex":6,"name":"Jacek","surname":"Kaczmarczyk","age":45,"faculty":"AIR","year":1,"grades":[{"subject":"history","grade":5},{"subject":"music","grade":5},{"subject":"WDI","grade":5}]}
+{"_id":{"$oid":"625c92a2dc7746359a70054e"},"albumIndex":5,"name":"Mikolaj","surname":"Kopernik","age":62,"faculty":"IMIR","profesor":true}
+{"_id":{"$oid":"625c92a2dc7746359a70054f"},"albumIndex":1,"name":"Karol","surname":"Wrona","age":20,"faculty":"WIET","year":2,"grades":[{"subject":"math","grade":5},{"subject":"database","grade":5},{"subject":"ASD","grade":5}]}

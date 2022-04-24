@@ -1,0 +1,10 @@
+{"albumIndex":1 ,"name": "Karol", "surname": "Wrona", "age": 20, "faculty": "WIET", "year": 2, "grades":[{"subject":"math", "grade":5},{"subject":"database", "grade": 5}, {"subject":"ASD", "grade":5}]}
+{"albumIndex":2 ,"name": "Mariusz", "surname": "Pudzianowski", "age": 40, "faculty": "WIET", "year": 2, "grades":[{"subject":"PE", "grade":5},{"subject":"ASD", "grade": 3}, {"subject":"WDAI", "grade":5}]}
+{"albumIndex":3 ,"name": "Jan", "surname": "Kolodziej", "age": 26, "faculty": "WIET", "year": 3, "grades":[{"subject":"math", "grade":5},{"subject":"database", "grade": 5}, {"subject":"ASD", "grade":5}]}
+{"albumIndex":4 ,"name": "Zbigniew", "surname": "Wodecki", "age": 60, "faculty": "WIET", "year": 4, "grades":[{"subject":"math", "grade":5},{"subject":"music", "grade": 5}, {"subject":"WDI", "grade":5}]}
+{"albumIndex":5 ,"name": "Mikolaj", "surname": "Kopernik", "age": 62, "faculty": "IMIR", "year": 2, "grades":[{"subject":"astronomy", "grade":5},{"subject":"music", "grade": 5}, {"subject":"WDI", "grade":5}]}
+{"albumIndex":6 ,"name": "Jacek", "surname": "Kaczmarczyk", "age": 45, "faculty": "AIR", "year": 1, "grades":[{"subject":"history", "grade":5},{"subject":"music", "grade": 5}, {"subject":"WDI", "grade":5}]}
+{"albumIndex":7 ,"name": "Zbigniew", "surname": "Gintrowski", "age": 60, "faculty": "AIR", "year": 4, "grades":[{"subject":"math", "grade":5},{"subject":"music", "grade": 3}, {"subject":"WDI", "grade":5}]}
+{"albumIndex":8 ,"name": "Zbigniew", "surname": "Lapinski", "age": 60, "faculty": "AIR", "year": 4, "grades":[{"subject":"ASD", "grade":5},{"subject":"music", "grade": 2}, {"subject":"WDI", "grade":5}]}
+{"albumIndex":9 ,"name": "Zbigniew", "surname": "Raubo", "age": 57, "faculty": "WIET", "year": 4, "grades":[{"subject":"math", "grade":5},{"subject":"PE", "grade": 3}, {"subject":"WDI", "grade":5}]}
+{"albumIndex":10 ,"name": "Andrzej", "surname": "Jankowski", "age": 34, "faculty": "WIMP", "year": 2, "grades":[{"subject":"math", "grade":5},{"subject":"WDAI", "grade": 5}, {"subject":"WDI", "grade":5}]}

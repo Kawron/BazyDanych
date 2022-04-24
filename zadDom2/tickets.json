@@ -1,0 +1,33 @@
+{
+    "trip_id": 0,
+    "tickets": [
+        {"user_id":0,"price":600},
+        {"user_id":0,"price":600},
+        {"user_id":0,"price":600},
+        {"user_id":1,"price":600},
+        {"user_id":2,"price":600}
+    ]
+}
+{
+    "trip_id": 1,
+    "tickets": [
+        {"user_id":0,"price":700},
+        {"user_id":1,"price":700},
+        {"user_id":2,"price":700},
+        {"user_id":3,"price":700}
+    ]
+}
+{
+    "trip_id": 2,
+    "tickets": [
+        {"user_id":0,"price":1500},
+        {"user_id":1,"price":1500}
+    ]
+}
+{
+    "trip_id": 3,
+    "tickets": [
+        {"user_id":0,"price":600},
+        {"user_id":0,"price":600}
+    ]
+}
