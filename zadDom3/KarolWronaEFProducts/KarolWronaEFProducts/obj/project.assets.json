@@ -1135,11 +1135,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\wrona\\source\\repos\\KarolWronaEFProducts\\KarolWronaEFProducts\\KarolWronaEFProducts.csproj",
+      "projectUniqueName": "C:\\Users\\wrona\\Desktop\\BazyDanych\\zadDom3\\KarolWronaEFProducts\\KarolWronaEFProducts\\KarolWronaEFProducts.csproj",
       "projectName": "KarolWronaEFProducts",
-      "projectPath": "C:\\Users\\wrona\\source\\repos\\KarolWronaEFProducts\\KarolWronaEFProducts\\KarolWronaEFProducts.csproj",
+      "projectPath": "C:\\Users\\wrona\\Desktop\\BazyDanych\\zadDom3\\KarolWronaEFProducts\\KarolWronaEFProducts\\KarolWronaEFProducts.csproj",
       "packagesPath": "C:\\Users\\wrona\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\wrona\\source\\repos\\KarolWronaEFProducts\\KarolWronaEFProducts\\obj\\",
+      "outputPath": "C:\\Users\\wrona\\Desktop\\BazyDanych\\zadDom3\\KarolWronaEFProducts\\KarolWronaEFProducts\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\wrona\\AppData\\Roaming\\NuGet\\NuGet.Config",

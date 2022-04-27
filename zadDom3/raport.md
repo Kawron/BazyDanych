@@ -1,6 +1,13 @@
 # Karol Wrona - Entity Framework
 
-## Dodawanie dostawcy
+- [Karol Wrona - Entity Framework](#karol-wrona---entity-framework)
+    - [1. Relacja Product Supplier](#1-relacja-product-supplier)
+  - [2. Odwracanie relacji](#2-odwracanie-relacji)
+  - [3. Relacja dwustronna](#3-relacja-dwustronna)
+  - [4. Many to many](#4-many-to-many)
+  - [5. Dziedziczenie - table per hierarchy](#5-dziedziczenie---table-per-hierarchy)
+  - [6. Dziedziczenie - table per class](#6-dziedziczenie---table-per-class)
+  - [Podsumowanie dziedziczenia](#podsumowanie-dziedziczenia)
 
 ### 1. Relacja Product Supplier
 
@@ -269,7 +276,7 @@ namespace KarolWronaEFProducts
 
 Tutaj musieliśmy dodać także specjalnego usinga.
 
-Modyfikujemy klaśe *Product* oraz *ProductContext*:
+Modyfikujemy klase *Product* oraz *ProductContext*:
 
 ```c#
     public class Product
@@ -405,9 +412,9 @@ foreach (var item in query)
 ![1](./images/res2.png)
 
 
-## 5. Dziedziczenie
+## 5. Dziedziczenie - table per hierarchy
 
-Klasycznie rozpocząłem od wyczeszczenia danych. Następnie dodałem naszą nową klasę *Company*:
+Klasycznie rozpocząłem od wyczyszczenia danych. Następnie dodałem naszą nową klasę *Company*:
 
 
 ```c#
@@ -498,7 +505,7 @@ Sprawdźmy jak wygląda nasza baza danych:
 
 Jak widać entity framework wyśmieniecie poradził sobie z tym zadaniem i utworzył jedną wspólną tabele, która zawiera kolumny właściwe dla klasy nadrzędnej i wszystkich klas dziedziczących po niej. Framework dodał nawet kolumnę *Discriminator*, która pozwala na odróźnienie jakiej klasy jest dana encja.
 
-Wykonajmy kilka pod zapytań do naszej bazy danych:
+Wykonajmy kilka podzapytań do naszej bazy danych:
 
 ```c#
 var query = from comp in productContext.Companies
@@ -526,3 +533,121 @@ I dostajemy taki oto rezultat:
 
 ![1](./images/res3.png)
 
+
+## 6. Dziedziczenie - table per class
+
+Tym razem chcemy mieć osobną tablicę dla każdej klasy dziedziczącej po *Company*. Aby to zrobić musimy przedewszystkim zmienić *ProductContext*:
+
+```c#
+    public class ProductContext : DbContext
+    {
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlite("Datasource=ProductDatabase");
+        }
+    }
+```
+
+Jak widać "dodaliśmy" tabele Customers i Suppliers, mogło by się więc wydawać, że to wszystko co trzeba zrobić. Jednak Entity Framework to zdradliwe narzędzie gdyż wynikiem takiego kodu byłby model table for hierarchy. Aby to naprawić trzeba dodać odpowiednie adnotacje:
+
+```c#
+    [Table("Companies")]
+    public class Company
+    {
+        public int CompanyID { get; set; }
+        public string CompanyName { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+    }
+```
+
+```c#
+    [Table("Customers")]
+    public class Customer : Company
+    {
+        public decimal? Discount { get; set; }
+    }
+```
+
+```c#
+    [Table("Suppliers")]
+    public class Supplier : Company
+    {
+        public string? BankAccountNumber { get; set; }
+    }
+```
+
+Teraz spróbujmy dodać nowe dane do bazy:
+
+```c#
+ProductContext productContext = new ProductContext();
+
+Company supplier1 = new Supplier { CompanyName = "PisadlaCompany", City = "Cracow", Street = "Reymonta", ZipCode = "12-123", BankAccountNumber = "123456789" };
+Company supplier2 = new Supplier { CompanyName = "Linijka&Ekierka", City = "Cracow", Street = "Nawojki", ZipCode = "12-345", BankAccountNumber = "987654321" };
+
+Company person1 = new Customer { CompanyName = "Maciej", City = "Warsaw", Street = "Marszalkowska", ZipCode = "31-234", Discount = 0.12M };
+Company person2 = new Customer { CompanyName = "Adam", City = "Wroclaw", Street = "Slodowa", ZipCode = "35-234", Discount = 0.8M };
+
+Company company1 = new Company { CompanyName = "JustCompany", City = "Katowice", Street = "Francuska", ZipCode = "19-234" };
+
+productContext.Companies.Add(person1);
+productContext.Companies.Add(person2);
+productContext.Companies.Add(supplier1);
+productContext.Companies.Add(supplier2);
+productContext.Companies.Add(company1);
+
+productContext.SaveChanges();
+```
+
+Sprawdźmy jak wygląda schemat naszej bazy danych:
+
+![1](images/diagramtpt.png)
+
+Zobaczmy jak wyglądają tabele:
+
+![1](images/tpt1.png)
+
+![1](images/tpt2.png)
+
+![1](images/tpt3.png)
+
+Warto zauważyć, że w tabeli *Companies* znajdują się wszystkie obiekty dziedzczące po *Company*. Kolumny tej tabeli zawierają pola wspólne dla tych klas, natomiast w tabelach *Customers*, *Suppliers* znajdują się informacje odpowiednie tylko dla tych klas. Zauważmy jednak, że tracimy kolumnę *Discriminator*, która pozwala nam w łatwy sposób odróżnić od siebie encje.
+
+Na koniec wykonajmy kilka podzapytań do tej bazy danych z poziomu aplikacji:
+
+```c#
+Console.WriteLine("Print companies that are neither Customer nor Supplier: ");
+
+var query = productContext.Companies.Where(a => !productContext.Suppliers.Any(b => b.CompanyID == a.CompanyID) &&
+!productContext.Customers.Any(c => c.CompanyID == a.CompanyID));
+
+foreach (var comp in query)
+{
+    Console.WriteLine(comp.CompanyName);
+}
+
+var query2 = from comp in productContext.Suppliers
+             where comp.BankAccountNumber != null
+             select comp.CompanyName;
+
+Console.WriteLine("Names of companies with bank account: ");
+foreach (var name in query2)
+{
+    Console.WriteLine(name);
+}
+```
+
+![1](images/res4.png)
+
+## Podsumowanie dziedziczenia
+
+Jak widać model table-for-hierarchy skutukuje powstaniem jednej, dużej tabeli, w której znajduje się suma wszystkich mapowanych właściowści klas oraz kolumna rożróźniająca poszczególne klasy. Oznacza to, że prawdopodobnie duża część z nich będzie miała wartość null. Osobiście to podejście spodobało mi się najbardziej, szczególnie z względu na to, że bardzo łatwo można dostać informację o tym jakiej klasy jest dana encja. Rozwiązanie to jednak dużo traci w przypadku klas z dużą ilością pól, w tym wypadku model table-for-type zyskuje zdecydowaną przewagę gdyż nie tworzy tabeli z ogromną ilością kolumn więc pozwala na zachowanie rozsądnej struktury naszej bazy. Także w przypadku gdy mamy dużą ilość danych zdecydowałbym się na model TPT ze względu na mniejszą ilość *"nulli"*. 

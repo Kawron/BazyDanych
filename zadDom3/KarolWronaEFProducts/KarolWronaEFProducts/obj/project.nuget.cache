@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RRZsEwh51qsWQyM+JEgg5Ct7y/AI2DD7J8R7E8m0r5cCyS4iv76fzE8IpvpHE09UIvLlPPfovNYr6tKIi66hww==",
+  "dgSpecHash": "k1ESuSAqV/3CpmUHJzjgpb/vaLlJ7t3sxRFMhjjNtN+qC9UOLn30ylNMa6ZowMAlwzOHi4QJAuazc3xkJZbi+Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\wrona\\source\\repos\\KarolWronaEFProducts\\KarolWronaEFProducts\\KarolWronaEFProducts.csproj",
+  "projectFilePath": "C:\\Users\\wrona\\Desktop\\BazyDanych\\zadDom3\\KarolWronaEFProducts\\KarolWronaEFProducts\\KarolWronaEFProducts.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wrona\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\wrona\\.nuget\\packages\\microsoft.data.sqlite.core\\6.0.4\\microsoft.data.sqlite.core.6.0.4.nupkg.sha512",

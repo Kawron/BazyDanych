@@ -34,6 +34,8 @@ ProductContext productContext = new ProductContext();
 //Company person1 = new Customer { CompanyName = "Maciej", City = "Warsaw", Street = "Marszalkowska", ZipCode = "31-234", Discount = 0.12M };
 //Company person2 = new Customer { CompanyName = "Adam", City = "Wroclaw", Street = "Slodowa", ZipCode = "35-234", Discount = 0.8M };
 
+//Company company1 = new Company { CompanyName = "JustCompany", City = "Katowice", Street = "Francuska", ZipCode = "19-234" };
+
 //supplier1.Supplies.Add(flamaster);
 //supplier1.Supplies.Add(kreda);
 //supplier1.Supplies.Add(dlugopis);
@@ -59,23 +61,23 @@ ProductContext productContext = new ProductContext();
 //productContext.Companies.Add(person2);
 //productContext.Companies.Add(supplier1);
 //productContext.Companies.Add(supplier2);
+//productContext.Companies.Add(company1);
 
+Console.WriteLine("Print companies that are neither Customer nor Supplier: ");
 
-var query = from comp in productContext.Companies
-            where comp.CompanyID == 1
-            select comp.CompanyName;
+var query = productContext.Companies.Where(a => !productContext.Suppliers.Any(b => b.CompanyID == a.CompanyID) &&
+!productContext.Customers.Any(c => c.CompanyID == a.CompanyID));
 
-Console.WriteLine("Name of company with CompanyID = 1");
-foreach (var name in query)
+foreach (var comp in query)
 {
-    Console.WriteLine(name);
+    Console.WriteLine(comp.CompanyName);
 }
 
-var query2 = from comp in productContext.Companies
-             where comp.CompanyID == 3
+var query2 = from comp in productContext.Suppliers
+             where comp.BankAccountNumber != null
              select comp.CompanyName;
 
-Console.WriteLine("Name of company with CompanyID = 3");
+Console.WriteLine("Names of companies with bank account: ");
 foreach (var name in query2)
 {
     Console.WriteLine(name);
