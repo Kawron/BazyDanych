@@ -1,0 +1,56 @@
+{
+    "user_id":0,
+    "name":"Adam",
+    "surname":"Gruszka",
+    "address": {
+        "country": "Poland",
+        "city": "Cracow",
+        "postal-code": "32-523",
+        "street": "Kolejowska 9"
+    },
+    "phone-number": "123456789",
+    "enlisted": [0,1,2,3],
+    "rated":[0,1,2,3]
+}
+{
+    "user_id":1,
+    "name":"Marcin",
+    "surname":"Pietruszka",
+    "address": {
+        "country": "Poland",
+        "city": "Warsaw",
+        "postal-code": "12-523",
+        "street": "Francuska 1"
+    },
+    "phone-number": "319876345",
+    "enlisted": [0,1,2],
+    "rated":[]
+}
+{
+    "user_id":2,
+    "name":"Artur",
+    "surname":"Malina",
+    "address": {
+        "country": "Poland",
+        "city": "Warsaw",
+        "postal-code": "12-511",
+        "street": "Pocztowa 2"
+    },
+    "phone-number": "123456789",
+    "enlisted": [0,1],
+    "rated":[0,1]
+}
+{
+    "user_id":3,
+    "name":"Mateusz",
+    "surname":"Ogorek",
+    "address": {
+        "country": "Poland",
+        "city": "Wroclaw",
+        "postal-code": "12-121",
+        "street": "Sodowa 2"
+    },
+    "phone-number": "123657897",
+    "enlisted": [1],
+    "rated":[1]
+}

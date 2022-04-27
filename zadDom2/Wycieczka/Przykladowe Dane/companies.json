@@ -1,0 +1,39 @@
+{
+    "company_id":0,
+    "name":"BestTrips",
+    "address": {
+        "country": "Poland",
+        "city": "Cracow",
+        "postal-code": "32-500",
+        "street": "Marszalkowska 9"
+    },
+    "phone-number": "123456789",
+    "NIP": 1234567899,
+    "trips": [0,1]
+}
+{
+    "company_id":1,
+    "name":"CheapTrips",
+    "address": {
+        "country": "Poland",
+        "city": "Warsaw",
+        "postal-code": "11-100",
+        "street": "Aleje Jerozolimskie 1"
+    },
+    "phone-number": "987654321",
+    "NIP": 9876543211,
+    "trips": [2]
+}
+{
+    "company_id":2,
+    "name":"Komiwojazer",
+    "address": {
+        "country": "Poland",
+        "city": "Gdynia",
+        "postal-code": "33-902",
+        "street": "Gdanska 2"
+    },
+    "phone-number": "657483921",
+    "NIP": 675849321,
+    "trips": [3]
+}

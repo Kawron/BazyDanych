@@ -1,7 +1,32 @@
 # Karol Wrona - MongoDB
 
-INFO ABOUT SCHEMA
+- [Karol Wrona - MongoDB](#karol-wrona---mongodb)
+  - [1. i 2. Serwer mongo](#1-i-2-serwer-mongo)
+  - [3. Mongodb Atlas](#3-mongodb-atlas)
+  - [4. Tworzenie kolekcji](#4-tworzenie-kolekcji)
+  - [5. Zaimportuj przykładowe zbiory danych](#5-zaimportuj-przykładowe-zbiory-danych)
+    - [MongoDB Atlas Sample Dataset](#mongodb-atlas-sample-dataset)
+    - [Yelp Dataset](#yelp-dataset)
+  - [6. Zapoznaj się z strukturą przykładowych zbiorów danych/kolekcji](#6-zapoznaj-się-z-strukturą-przykładowych-zbiorów-danychkolekcji)
+  - [7. Operacje CRUD](#7-operacje-crud)
+    - [Stworzenie bazy danych i kolekcji](#stworzenie-bazy-danych-i-kolekcji)
+    - [Dodawanie dokumentów](#dodawanie-dokumentów)
+    - [Modyfikacja dokumentów](#modyfikacja-dokumentów)
+    - [Usuwanie dokumentów](#usuwanie-dokumentów)
+    - [Operacje wyszukiwania dokumentów](#operacje-wyszukiwania-dokumentów)
+  - [8.Operacje wyszukiwania danych](#8operacje-wyszukiwania-danych)
+  - [Modelowanie Danych](#modelowanie-danych)
+    - [Organizacja Danych](#organizacja-danych)
+    - [companies](#companies)
+    - [users](#users)
+    - [tickets](#tickets)
+    - [trips](#trips)
+    - [Tworzenie bazy danych](#tworzenie-bazy-danych)
+    - [Działania na bazie danych](#działania-na-bazie-danych)
 
+Przykładowe dane na, których operowałem oraz "dumpy" bazy danych znajdują się w osobnych plikach.
+
+<div style="page-break-after: always;"></div>
 
 ## 1. i 2. Serwer mongo
 
@@ -24,11 +49,11 @@ W kontenerze dockera:
 
 Utworzyłem serwer bazo danowych na serwisie mongodb Atlas, z przykładowym zbiorem danych:
 
-![1](/images/atlas.png)
+![1](./images/atlas.png)
 
 Następnie przy pomocy komendy uzyskanej na stronie mongodb połączyłem się z serwerem
 
-![1](/images/atlasconnection.png)
+![1](./images/atlasconnection.png)
 
 ## 4. Tworzenie kolekcji
 
@@ -38,24 +63,14 @@ Proces tworzenia kolekcji jest opisany w podupunkcie *"7. Operacje CRUD"*. Proce
 
 Pliki pobrałem z strony podanej w instrukcji.
 
+<div style="page-break-after: always;"></div>
+
 ### MongoDB Atlas Sample Dataset
 
 Do zaimportowania tego zbioru danych użyłem komendy *mongorestore*.
 
-Oto wynik:
-
 ```
-root@9fe38c358c36:/bazy/samples# mongorestore -d KW sample_airbnb
-2022-04-23T08:49:17.029+0000    The --db and --collection flags are deprecated for this use-case; please use --nsInclude instead, i.e. with --nsInclude=${DATABASE}.${COLLECTION}
-2022-04-23T08:49:17.029+0000    building a list of collections to restore from sample_airbnb dir
-2022-04-23T08:49:17.029+0000    reading metadata for KW.listingsAndReviews from sample_airbnb/listingsAndReviews.metadata.json
-2022-04-23T08:49:17.049+0000    restoring KW.listingsAndReviews from sample_airbnb/listingsAndReviews.bson
-2022-04-23T08:49:17.904+0000    finished restoring KW.listingsAndReviews (5555 documents, 0 failures)
-2022-04-23T08:49:17.904+0000    restoring indexes for collection KW.listingsAndReviews from metadata
-2022-04-23T08:49:17.905+0000    index: &idx.IndexDocument{Options:primitive.M{"background":true, "name":"property_type_1_room_type_1_beds_1", "v":2}, Key:primitive.D{primitive.E{Key:"property_type", Value:1}, primitive.E{Key:"room_type", Value:1}, primitive.E{Key:"beds", Value:1}}, PartialFilterExpression:primitive.D(nil)}
-2022-04-23T08:49:17.905+0000    index: &idx.IndexDocument{Options:primitive.M{"background":true, "name":"name_1", "v":2}, Key:primitive.D{primitive.E{Key:"name", Value:1}}, PartialFilterExpression:primitive.D(nil)}
-2022-04-23T08:49:17.905+0000    index: &idx.IndexDocument{Options:primitive.M{"2dsphereIndexVersion":3, "background":true, "name":"address.location_2dsphere", "v":2}, Key:primitive.D{primitive.E{Key:"address.location", Value:"2dsphere"}}, PartialFilterExpression:primitive.D(nil)}
-2022-04-23T08:49:18.034+0000    5555 document(s) restored successfully. 0 document(s) failed to restore.
+> mongorestore -d KW sample_airbnb
 ```
 
 Możemy teraz sprawdzić czy faktycznie kolekcja sample_airbnb została dodana do bazy KW.
@@ -76,9 +91,8 @@ A więc faktycznie zostały dodane wszystkie dane.
 Do importu tego zbioru danych użyłem komendy *mongoimport*.
 
 ```
-root@9fe38c358c36:/bazy/yelp_dataset# mongoimport --db KW --collection yelp --type json --file ./yelp_academic_dataset_business.json
-2022-04-23T09:06:15.150+0000    connected to: mongodb://localhost/
-2022-04-23T09:06:17.507+0000    42153 document(s) imported successfully. 0 document(s) failed to import.
+> mongoimport --db KW --collection yelp --type json 
+        --file ./yelp_academic_dataset_business.json
 ```
 
 Sprawdźmy czy faktycznie dane zostały dodane.
@@ -92,6 +106,9 @@ yelp
 > db.yelp.find({}).count()
 42153
 ```
+
+<div style="page-break-after: always;"></div>
+
 
 ## 6. Zapoznaj się z strukturą przykładowych zbiorów danych/kolekcji
 
@@ -161,8 +178,6 @@ Jak widać pierwszym polem obiektu jest *"_id"*, za pomocą którego możemy si�
 
 ## 7. Operacje CRUD
 
-Dobrze by było to na kompie przeleciec i zrobic jescze raz z preety. 
-
 ### Stworzenie bazy danych i kolekcji
 
 Stworzenie bazy danych:
@@ -194,6 +209,9 @@ student1 = {
 }
 ```
 
+<div style="page-break-after: always;"></div>
+
+
 ### Dodawanie dokumentów
 
 Dokumenty można dodawać za pomocą wywołań:
@@ -212,12 +230,6 @@ Dużo prościej jest jednak stworzyć gotowy plik json (np. w vimie) i z poziomu
 > mongoimport students.json --db="KW" --collection="student"
 ```
 
-Zanim jednak zaimportujemy plik students.json, powiniśmy dodać klucz (w mongo tzw. index), którym będzie pole *index*:
-
-```
-> db.student.createIndex({"albumIndex":1}, {unique:true})
-```
-
 Aby wylistować dokumenty dodane do naszej komendy możemy użyć:
 
 ```
@@ -227,23 +239,79 @@ Aby wylistować dokumenty dodane do naszej komendy możemy użyć:
 Tak wygląda nasza kolekcja po wywołaniu ww. komendy:
 
 ```
-{ "_id" : ObjectId("625c8c428d75782cd25f508c"), "albumIndex" : 5, "name" : "Mikolaj", "surname" : "Kopernik", "age" : 62, "faculty" : "IMIR", "year" : 2, "grades" : [ { "subject" : "astronomy", "grade" : 5 }, { "subject" : "music", "grade" : 5 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f508d"), "albumIndex" : 4, "name" : "Zbigniew", "surname" : "Wodecki", "age" : 60, "faculty" : "WIET", "year" : 4, "grades" : [ { "subject" : "math", "grade" : 5 }, { "subject" : "music", "grade" : 5 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f508e"), "albumIndex" : 6, "name" : "Jacek", "surname" : "Kaczmarczyk", "age" : 45, "faculty" : "AIR", "year" : 1, "grades" : [ { "subject" : "history", "grade" : 5 }, { "subject" : "music", "grade" : 5 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f508f"), "albumIndex" : 8, "name" : "Zbigniew", "surname" : "Lapinski", "age" : 60, "faculty" : "AIR", "year" : 4, "grades" : [ { "subject" : "ASD", "grade" : 5 }, { "subject" : "music", "grade" : 2 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f5090"), "albumIndex" : 9, "name" : "Zbigniew", "surname" : "Raubo", "age" : 57, "faculty" : "WIET", "year" : 4, "grades" : [ { "subject" : "math", "grade" : 5 }, { "subject" : "PE", "grade" : 3 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f5091"), "albumIndex" : 10, "name" : "Andrzej", "surname" : "Jankowski", "age" : 34, "faculty" : "WIMP", "year" : 2, "grades" : [ { "subject" : "math", "grade" : 5 }, { "subject" : "WDAI", "grade" : 5 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f5092"), "albumIndex" : 7, "name" : "Zbigniew", "surname" : "Gintrowski", "age" : 60, "faculty" : "AIR", "year" : 4, "grades" : [ { "subject" : "math", "grade" : 5 }, { "subject" : "music", "grade" : 3 }, { "subject" : "WDI", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f5093"), "albumIndex" : 1, "name" : "Karol", "surname" : "Wrona", "age" : 20, "faculty" : "WIET", "year" : 2, "grades" : [ { "subject" : "math", "grade" : 5 }, { "subject" : "database", "grade" : 5 }, { "subject" : "ASD", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f5094"), "albumIndex" : 3, "name" : "Jan", "surname" : "Kolodziej", "age" : 26, "faculty" : "WIET", "year" : 3, "grades" : [ { "subject" : "math", "grade" : 5 }, { "subject" : "database", "grade" : 5 }, { "subject" : "ASD", "grade" : 5 } ] }
-{ "_id" : ObjectId("625c8c428d75782cd25f5095"), "albumIndex" : 2, "name" : "Mariusz", "surname" : "Pudzianowski", "age" : 40, "faculty" : "WIET", "year" : 2, "grades" : [ { "subject" : "PE", "grade" : 5 }, { "subject" : "ASD", "grade" : 3 }, { "subject" : "WDAI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f508c"), "albumIndex" : 5,
+ "name" : "Mikolaj", "surname" : "Kopernik",
+ "age" : 62, "faculty" : "IMIR", "year" : 2, "grades" : [
+          { "subject" : "astronomy", "grade" : 5 },
+           { "subject" : "music", "grade" : 5 },
+            { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f508d"), "albumIndex" : 4,
+ "name" : "Zbigniew", "surname" : "Wodecki",
+ "age" : 60, "faculty" : "WIET", "year" : 4, "grades" : [
+          { "subject" : "math", "grade" : 5 },
+           { "subject" : "music", "grade" : 5 },
+            { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f508e"), "albumIndex" : 6,
+ "name" : "Jacek", "surname" : "Kaczmarczyk",
+ "age" : 45, "faculty" : "AIR", "year" : 1, "grades" : [
+          { "subject" : "history", "grade" : 5 },
+           { "subject" : "music", "grade" : 5 },
+            { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f508f"), "albumIndex" : 8,
+ "name" : "Zbigniew", "surname" : "Lapinski",
+ "age" : 60, "faculty" : "AIR", "year" : 4, "grades" : [
+          { "subject" : "ASD", "grade" : 5 },
+           { "subject" : "music", "grade" : 2 },
+            { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f5090"), "albumIndex" : 9,
+ "name" : "Zbigniew", "surname" : "Raubo",
+ "age" : 57, "faculty" : "WIET", "year" : 4, "grades" : [ 
+         { "subject" : "math", "grade" : 5 },
+          { "subject" : "PE", "grade" : 3 },
+           { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f5091"), "albumIndex" : 10,
+ "name" : "Andrzej", "surname" : "Jankowski",
+ "age" : 34, "faculty" : "WIMP", "year" : 2, "grades" : [
+          { "subject" : "math", "grade" : 5 },
+           { "subject" : "WDAI", "grade" : 5 },
+            { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f5092"), "albumIndex" : 7,
+ "name" : "Zbigniew", "surname" : "Gintrowski",
+ "age" : 60, "faculty" : "AIR", "year" : 4, "grades" : [
+          { "subject" : "math", "grade" : 5 },
+           { "subject" : "music", "grade" : 3 },
+            { "subject" : "WDI", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f5093"), "albumIndex" : 1,
+ "name" : "Karol", "surname" : "Wrona",
+ "age" : 20, "faculty" : "WIET", "year" : 2, "grades" : [
+          { "subject" : "math", "grade" : 5 },
+           { "subject" : "database", "grade" : 5 },
+            { "subject" : "ASD", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f5094"), "albumIndex" : 3,
+ "name" : "Jan", "surname" : "Kolodziej",
+ "age" : 26, "faculty" : "WIET", "year" : 3, "grades" : [
+          { "subject" : "math", "grade" : 5 },
+           { "subject" : "database", "grade" : 5 },
+            { "subject" : "ASD", "grade" : 5 } ] }
+{ "_id" : ObjectId("625c8c428d75782cd25f5095"), "albumIndex" : 2,
+ "name" : "Mariusz", "surname" : "Pudzianowski",
+ "age" : 40, "faculty" : "WIET", "year" : 2, "grades" : [ 
+         { "subject" : "PE", "grade" : 5 },
+          { "subject" : "ASD", "grade" : 3 },
+           { "subject" : "WDAI", "grade" : 5 } ] }
 ```
 
 Spróbujmy wstawić teraz nowego studenta "Adam Gruszka" za pomocą funkcji *db.student.insertOne()*:
 
 ```
->  db.student.insertOne({albumIndex:11, name:"Adam", surname:"Gruszka", age:18, faculty:"WIMIR", year:2, grades:[{subject:"math", grade:5},{subject:"ASD", grade:4}]})
+>  db.student.insertOne({albumIndex: 11, name: "Adam", surname: "Gruszka",
+ age: 18, faculty: "WIMIR", year: 2, grades: [
+        {subject: "math", grade: 5},
+        {subject: "ASD", grade: 4}
+]})
 ```
+
+<div style="page-break-after: always;"></div>
 
 Znajdźmy teraz naszego nowego studenta:
 
@@ -270,35 +338,36 @@ Znajdźmy teraz naszego nowego studenta:
 }
 ```
 
+
 ### Modyfikacja dokumentów
 
 Spróbujmy sprawić by "Adam Gruszka" przeszedł z drugiego roku na trzeci. Użyjemy do tego komendy:
 
 ```
-> db.student.updateOne({name: "Adam"}, {$set: {year:3}})
+> db.student.updateOne({name: "Adam"}, {$set: {year: 3}})
 ```
 
 Jak widać operacja powiodła się:
 
 ```
-> db.student.find({name:"Adam"}, {year:1, _id:0, name:1, surname:1})
+> db.student.find({name: "Adam"}, {year: 1, _id: 0, name: 1, surname: 1})
 { "name" : "Adam", "surname" : "Gruszka", "year" : 3 }
 ```
 
 Spróbujmy teraz dla wszystkich studentów, którzy mają powyżej 50 lat, dodać pole *profesor:true* oraz usunąć pola *year* i *grades* :
 
 ```
-> db.student.updateMany({age: {$gt:50}}, {$set: {profesor:true}})
+> db.student.updateMany({age: {$gt: 50}}, {$set: {profesor: true}})
 ```
 
 ```
-> db.student.updateMany({age: {$gt:50}}, {$unset: {year:"", grades:""}})
+> db.student.updateMany({age: {$gt: 50}}, {$unset: {year: "", grades: ""}})
 ```
 
 Oto lista naszych profesorów:
 
 ```
-> db.student.find({profesor:true}).pretty()
+> db.student.find({profesor: true}).pretty()
 {
         "_id" : ObjectId("625c92a2dc7746359a700547"),
         "albumIndex" : 4,
@@ -346,6 +415,8 @@ Oto lista naszych profesorów:
 }
 ```
 
+
+
 Oczywiście profesorowie to nie studenci, a więc należało by stworzyć dla nich osobną kolekcję, jednak na potrzeby naszego ćwiczenia wystarczy, że zademonstrowaliśmy jak działa *db.student.updateMany()*
 
 ### Usuwanie dokumentów
@@ -353,11 +424,11 @@ Oczywiście profesorowie to nie studenci, a więc należało by stworzyć dla ni
 Ostatecznie usuńmy naszego "Adama Gruszkę" z listy studentów.
 
 ```
-> db.student.deleteOne({albumIndex:11, name:"Adam", surname:"Gruszka"})
+> db.student.deleteOne({albumIndex: 11, name: "Adam", surname: "Gruszka"})
 ```
 
 ```
-> db.student.find({name:"Adam"}).pretty()
+> db.student.find({name: "Adam"}).pretty()
 >
 ```
 
@@ -382,7 +453,11 @@ Wykonajmy kilka przykładowych wyszukań.
 1. Znajdź wszystkich studentów WIMP lub WIET na 2 roku:
 
 ```
-> db.student.find({ $or: [{faculty:"WIET"}, {faculty:"WIMP"}], year:2}).pretty()
+> db.student.find({ $or: [
+        {faculty: "WIET"},
+        {faculty: "WIMP"}
+        ],
+        year: 2}).pretty()
 {
         "_id" : ObjectId("625c92a2dc7746359a700549"),
         "albumIndex" : 10,
@@ -454,10 +529,11 @@ Wykonajmy kilka przykładowych wyszukań.
 }
 ```
 
-1. Znajdź wszstkich studentów z oceną z ASD niższą niż 5:
+2. Znajdź wszystkich studentów z oceną z ASD niższą niż 5:
 
 ```
-> db.student.find({grades:{$elemMatch:{subject:"ASD", grade:{$lt:5}}}}).pretty()
+> db.student.find({grades:{$elemMatch:
+ {subject:"ASD", grade:{$lt:5}}}}).pretty()
 {
         "_id" : ObjectId("625c92a2dc7746359a70054b"),
         "albumIndex" : 2,
@@ -486,7 +562,7 @@ Wykonajmy kilka przykładowych wyszukań.
 3. Znajdź wszystkich studentów, którzy mają oceny z matematyki: 
 
 ```
-> db.student.find({grades:{$elemMatch:{subject:"math"}}}).pretty()
+> db.student.find({grades: {$elemMatch: {subject: "math"}}}).pretty()
 {
         "_id" : ObjectId("625c92a2dc7746359a700546"),
         "albumIndex" : 3,
@@ -565,19 +641,23 @@ a) Zwróć dane wszystkich zamkniętych (open) firm (business). Zapytanie powinn
 Do tego zadania użyjemy komendy:
 
 ```
-> db.business.find({open:false}, {_id:0, name:1, full_address:1, stars:1})
+> db.business.find({open: false},
+ {_id: 0, name: 1, full_address: 1, stars: 1})
 ```
 
 Pierwszy obiekt to ustawienia filtrowania, drugi natomiast ustawia, które informacje zostaną wypisane.
 
+<div style="page-break-after: always;"></div>
+
 wynik:
 
-![1](images/wazne1.png)
+![1](./images/1.png)
 
 Dodając do wywołania komendy .count() możemy łatwo sprawdzić, że wyników jest dużo więcej:
 
 ```
-> db.business.find({open:false}, {_id:0, name:1, full_address:1, stars:1}).count()
+> db.business.find({open: false},
+ {_id: 0, name: 1, full_address: 1, stars: 1}).count()
 5008
 ```
 
@@ -588,46 +668,53 @@ b) Ile miejsc ocenianych na 5 gwiazdek (pole stars, kolekcja business).
 Do tego zadania użyjemy komendy:
 
 ```
-> db.business.count({stars:5})
+> db.business.count({stars: 5})
 ```
 
 co jest równoważne :
 
 ```
-> db.business.find({stars:5}).count()
+> db.business.find({stars: 5}).count()
 ```
 
 wynik działania:
 
-![1](images/WAZNE2.png)
+![1](./images/2.png)
+
+<div style="page-break-after: always;"></div>
 
 c) Ile restauracji znajduje się w każdym mieście. (pole categories w dokumencie business musi zawierać wartość Restaurants).
 
 Użyjemy komendy:
 
 ```
-> db.business.aggregate([{$match: {categories:"Restaurants"}}, {$group: {_id: "$city", count: {$count:{}}}}])
+> db.business.aggregate([{$match: {categories: "Restaurants"}},
+ {$group: {_id: "$city", count: {$count:{}}}}])
 ```
 
-![1](images/Wazne3.png)
+![1](./images/3.png)
 
 Ponownie wyników jest więcej niż zostało wypisanych na konsole, jeśli chcemy to możemy je zobaczyć wpisując *it* w konsoli.
 
-d) Zwróć bez powtórzeńwszystkie nazwy miast w których znajdują się firmy (business)
+<div style="page-break-after: always;"></div>
+
+d) Zwróć bez powtórzeń wszystkie nazwy miast w których znajdują się firmy (business)
 
 Użyjemy do tego komendy:
 
 ```
-> db.business.distinct("city", {type:"business"})
+> db.business.distinct("city", {type: "business"})
 ```
 
 Oto pierwsze kilanaście miast, które dostaliśmy:
 
-![1](images/WAZNE4.png)
+![1](./images/4.png)
+
+<div style="page-break-after: always;"></div>
 
 ## Modelowanie Danych
 
-Wybrałem opcję B.
+Wybrałem opcje B.
 
 ### Organizacja Danych
 
@@ -657,6 +744,9 @@ company = {
 ```
 
 Address postanowiłem trzymać jako dokument zagnieżdzony, ponieważ pozwala to na otrzymanie i modyfikowanie adressu za pomocą pojedynczych operacji na bazie danych. Jest to *zdenormalizowany* model danych, który jednak w bazach dokumentowych jest jak najbardziej akceptowalny. Mamy też tablice trips w której przetrzymujemy *trip_id* wycieczek organizowanych przez daną firmę, zastosowanie referencji do dokumentów w kolekcji trips, pozwala nam uniknąć powielenia danych. Jest to *znormalizowany* model danych. Ponieważ przechowujemy tylko id obiektów z innej kolekcji, nie musimy się martwić o atomiczność transakcji.
+
+<div style="page-break-after: always;"></div>
+
 
 ### users
 
@@ -704,6 +794,9 @@ trip-ticket = {
 
 Zakładamy, że jeśli użytkownik chcę zarezerwować wiele miejsc to jest to równoważne kupieniu kilku biletów. O tej tabeli opowiem trochę więcej w następnym podpunkcie.
 
+<div style="page-break-after: always;"></div>
+
+
 ### trips
 
 Tak wygląda struktura dokumentu kolekcji *trips*:
@@ -732,6 +825,9 @@ Tutaj warto zastanowić się nad pewnymi rozwiązaniami. Dokument *trip* nie zaw
 
 Jeśli chodzi natomiast o oceny, zdecydowałem się przechowywać informacje o ocenach i komentarzach w *trips*, natomiast w dokumentach *users* przechowywać informację tylko o ocenionych wycieczkach.
 
+<div style="page-break-after: always;"></div>
+
+
 ### Tworzenie bazy danych
 
 Na początku stwórzmy bazę danych i kolekcje:
@@ -751,9 +847,11 @@ switched to db KW
 
 W edytorze tekstowym stworzyłem pliki json i za pomocą *mongoimoport* dodałem je do odpowiednich kolekcji.
 
+<div style="page-break-after: always;"></div>
+
 ### Działania na bazie danych
 
-1. Dostań wszystkich uczestników danej wycieczki nr. 2:
+1. Dostań wszystkich uczestników wycieczki nr.2:
 
 ```
 > db.users.find( {enlisted : 2} ).pretty()
@@ -804,9 +902,12 @@ W edytorze tekstowym stworzyłem pliki json i za pomocą *mongoimoport* dodałem
 >
 ```
 
+<div style="page-break-after: always;"></div>
+
+
 2. Sprawdź ile jest wolnych miejsc dla wycieczki nr.1:
 
-Najpierw sprawdźmy ile jest maksymalnie miejsc dla danej wycieczki:
+Najpierw sprawdźmy ile jest maksymalnie wolnych miejsc dla danej wycieczki:
 
 ```
 > db.trips.find({trip_id : 2}, {_id : 0, "max-no-of-places" : 1})
@@ -816,7 +917,8 @@ Najpierw sprawdźmy ile jest maksymalnie miejsc dla danej wycieczki:
 Teraz sprawdźmy ile jest zajętych miejsc:
 
 ```
-> db.tickets.aggregate([{ $match: { trip_id : 2 }}, {$project : { _id : 0, count : { $size : "$tickets"}}}])
+> db.tickets.aggregate([{ $match: { trip_id : 2 }},
+ {$project : { _id : 0, count : { $size : "$tickets"}}}])
 { "count" : 2 }
 ```
 
@@ -827,7 +929,8 @@ Te dwa wywołania zwracają nam obiekty json które łatwo można rozpakować po
 Taka komenda zwraca nam obiekt z użytkownikiem, który wystawił największą ilość ocen.
 
 ```
-> db.users.aggregate([{$project : { name : 1, count : { $size : "$rated"}}}, {$sort : { count : -1}}]).toArray()[0]
+> db.users.aggregate([{$project : { name : 1, count : { $size :"$rated"}}},
+ {$sort : { count : -1}}]).toArray()[0]
 {
         "_id" : ObjectId("626463373680703f11b05943"),
         "name" : "Adam",
@@ -839,7 +942,11 @@ Taka komenda zwraca nam obiekt z użytkownikiem, który wystawił największą i
 
  ```
 > db.users.aggregate([{$match : {user_id: 2}},
- {$lookup : {from: "trips", localField: "enlisted", foreignField: "trip_id", as: "trips"}},
+ {$lookup : {
+        from: "trips",
+        localField: "enlisted",
+        foreignField: "trip_id",
+        as: "trips"}},
  {$project : {_id : 0, trips: { name : 1 }}}]).pretty()
 {
         "trips" : [
